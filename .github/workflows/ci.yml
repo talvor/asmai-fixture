@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Read CI mode
+        id: mode
+        run: |
+          read -r mode minutes < .ci-mode || true
+          echo "mode=${mode:-green}" >> "$GITHUB_OUTPUT"
+          echo "minutes=${minutes:-20}" >> "$GITHUB_OUTPUT"
+          echo "CI mode: ${mode:-green} ${minutes}"
+
+      - name: Delay (slow mode)
+        if: steps.mode.outputs.mode == 'slow'
+        run: |
+          echo "Sleeping ${{ steps.mode.outputs.minutes }} minutes"
+          sleep $(( ${{ steps.mode.outputs.minutes }} * 60 ))
+
+      - name: Test
+        run: npm test
+
+      - name: Fail (red mode)
+        if: steps.mode.outputs.mode == 'red'
+        run: |
+          echo "::error::CI forced red by .ci-mode"
+          exit 1
