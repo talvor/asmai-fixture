@@ -4,6 +4,10 @@ export function greet(name = 'world') {
   return `Hello, ${name}!`;
 }
 
+export function farewell(name = 'world') {
+  return `Goodbye, ${name}!`;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log(greet(process.argv[2]));
 }
