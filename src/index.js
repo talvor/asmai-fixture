@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-export function greet(name = 'Phillip') {
+export function greet(name = 'Paul') {
   return `Hello, ${name}!`;
 }
 
