@@ -6,7 +6,7 @@ const run = (...args) =>
   execFileSync(process.execPath, ['src/index.js', ...args], { encoding: 'utf8' });
 
 test('prints the default greeting', () => {
-  assert.equal(run(), 'Hello, world!\n');
+  assert.equal(run(), 'Hello, Phillip!\n');
 });
 
 test('prints a greeting for a name argument', () => {
