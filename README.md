@@ -5,7 +5,7 @@ A small fixture repository for [talvor/asmai](https://github.com/talvor/asmai). 
 The code is a hello-world Node.js module (`src/index.js`) with a test (`test/index.test.js`).
 
 ```sh
-npm start          # Hello, Phillip!
+npm start          # Hello, Paul!
 npm start -- you   # Hello, you!
 npm test
 ```
