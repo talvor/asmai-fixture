@@ -7,6 +7,8 @@ The code is a hello-world Node.js module (`src/index.js`) with a test (`test/ind
 ```sh
 npm start          # Hello, Phillip!
 npm start -- you   # Hello, you!
+npm start -- --shout you   # HELLO, YOU!
+npm start -- --help        # usage
 npm test
 ```
 
