@@ -9,3 +9,11 @@ test('greets Phillip by default', () => {
 test('greets a given name', () => {
   assert.equal(greet('asmai'), 'Hello, asmai!');
 });
+
+test('greets a given name with a given greeting word', () => {
+  assert.equal(greet('Ada', 'Hi'), 'Hi, Ada!');
+});
+
+test('greets Phillip by default with a given greeting word', () => {
+  assert.equal(greet(undefined, 'Hi'), 'Hi, Phillip!');
+});
