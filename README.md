@@ -2,13 +2,16 @@
 
 A small fixture repository for [talvor/asmai](https://github.com/talvor/asmai). Delivery cases (M1 onwards) open pull requests here. They need CI whose outcome can be switched between **green**, **red**, **slow** and **absent**.
 
-The code is a hello-world Node.js module (`src/index.js`) with a test (`test/index.test.js`).
+The code is a hello-world Node.js module (`src/index.js`) with tests in `test/`.
 
 ```sh
 npm start          # Hello, Phillip!
 npm start -- you   # Hello, you!
+npm start -- --recent   # names greeted so far, newest first
 npm test
 ```
+
+Each greeting is remembered in `~/.asmai-fixture.json`, an ordered list of `{ name, greetedAt }`. Set `ASMAI_FIXTURE_STORE` to use another file.
 
 ## CI
 
