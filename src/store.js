@@ -39,6 +39,11 @@ export function rememberGreeting(name, path = storePath(), now = new Date()) {
   writeFileSync(path, JSON.stringify(entries, null, 2) + '\n');
 }
 
-export function recentNames(path = storePath()) {
-  return readGreetings(path).map((entry) => entry.name).reverse();
+export const RECENT_LIMIT = 5;
+
+// The most recent distinct names, newest first. A name greeted again appears
+// once, at its latest greeting. Reads only: the store is never written here.
+export function recentNames(path = storePath(), limit = RECENT_LIMIT) {
+  const names = readGreetings(path).map((entry) => entry.name).reverse();
+  return [...new Set(names)].slice(0, limit);
 }
