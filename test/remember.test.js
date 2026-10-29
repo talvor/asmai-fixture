@@ -57,6 +57,39 @@ test('--recent does not greet or remember anyone', () => {
   assert.deepEqual(readStore(store).map((e) => e.name), ['Ada']);
 });
 
+test('--recent lists a name greeted repeatedly once, at its latest position', () => {
+  const store = tempStore();
+  const run = runWith(store);
+  run('Ada');
+  run('Grace');
+  run('Ada');
+  assert.equal(run('--recent'), 'Ada\nGrace\n');
+  // Every greeting is still recorded; deduplication happens only on read.
+  assert.deepEqual(readStore(store).map((e) => e.name), ['Ada', 'Grace', 'Ada']);
+});
+
+test('--recent lists only the 5 most recent distinct names, newest first', () => {
+  const store = tempStore();
+  const run = runWith(store);
+  for (const name of ['Ada', 'Grace', 'Alan', 'Ada', 'Linus', 'Barbara', 'Ken', 'Grace', 'Dennis']) {
+    run(name);
+  }
+  assert.equal(run('--recent'), 'Dennis\nGrace\nKen\nBarbara\nLinus\n');
+});
+
+test('--recent leaves the store bytes unchanged and greets nobody', () => {
+  const store = tempStore();
+  const run = runWith(store);
+  run('Ada');
+  run('Grace');
+  const before = readFileSync(store);
+  const first = run('--recent');
+  const second = run('--recent');
+  assert.equal(first, second);
+  assert.doesNotMatch(first, /Hello/);
+  assert.deepEqual(readFileSync(store), before);
+});
+
 test('--recent with no store prints the empty message and exits 0', () => {
   const store = tempStore();
   assert.equal(runWith(store)('--recent'), 'No names greeted yet.\n');
