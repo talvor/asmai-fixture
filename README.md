@@ -7,8 +7,11 @@ The code is a hello-world Node.js module (`src/index.js`) with a test (`test/ind
 ```sh
 npm start          # Hello, Phillip!
 npm start -- you   # Hello, you!
+npm start -- --recent   # names greeted so far, newest first
 npm test
 ```
+
+Each greeting is remembered in `~/.asmai-fixture.json`, an ordered list of `{ name, greetedAt }`. Set `ASMAI_FIXTURE_STORE` to use another file.
 
 ## CI
 
