@@ -13,6 +13,8 @@ npm test
 
 Each greeting is remembered in `~/.asmai-fixture.json`, an ordered list of `{ name, greetedAt }`. Set `ASMAI_FIXTURE_STORE` to use another file.
 
+The name is trimmed, so `npm start -- " Ada "` greets `Hello, Ada!` and remembers `Ada`. A name that is empty or only whitespace is rejected: `Error: name must not be blank` on stderr, nothing on stdout, exit 1, and nothing is remembered. `--recent` skips blank names already in a store and compares names trimmed, so ` Ada ` and `Ada` are listed once, as `Ada`; it never rewrites the store.
+
 ## CI
 
 `.github/workflows/ci.yml` runs on every pull request as a single check, `CI / test`. By default it runs the tests and passes.

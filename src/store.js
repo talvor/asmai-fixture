@@ -54,8 +54,13 @@ export function rememberGreeting(name, path = storePath(), now = new Date()) {
 export const RECENT_LIMIT = 5;
 
 // The most recent distinct names, newest first. A name greeted again appears
-// once, at its latest greeting. Reads only: the store is never written here.
+// once, at its latest greeting. Names are compared trimmed, and blank names
+// (kept from before they were rejected) are skipped. Reads only: the store is
+// never written here.
 export function recentNames(path = storePath(), limit = RECENT_LIMIT) {
-  const names = readGreetings(path).map((entry) => entry.name).reverse();
+  const names = readGreetings(path)
+    .map((entry) => entry.name.trim())
+    .filter((name) => name !== '')
+    .reverse();
   return [...new Set(names)].slice(0, limit);
 }
