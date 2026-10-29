@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, chmodSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, chmodSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -64,6 +64,17 @@ test('--recent with a directory at the store path warns and exits 1', () => {
   assert.equal(warningLines(result.stderr).length, 1);
 });
 
+test('greeting with a store in a missing directory still greets, warns once and creates nothing', () => {
+  const dir = join(mkdtempSync(join(tmpdir(), 'asmai-fixture-')), 'missing');
+  const store = join(dir, 'store.json');
+  const result = run(store, 'Ada');
+  assert.equal(result.status, 0);
+  assert.equal(result.stdout, 'Hello, Ada!\n');
+  assert.equal(warningLines(result.stderr).length, 1);
+  assert.match(result.stderr, /^Warning: Ada was not remembered: /);
+  assert.equal(existsSync(dir), false);
+});
+
 // Root reads any file regardless of mode, and Windows ignores the mode bits.
 const permissionsEnforced = process.platform !== 'win32' && process.getuid?.() !== 0;
 
@@ -77,6 +88,23 @@ test('greeting with a permission-denied store still greets and leaves it untouch
     assert.equal(result.status, 0);
     assert.equal(result.stdout, 'Hello, Ada!\n');
     assert.equal(warningLines(result.stderr).length, 1);
+  } finally {
+    chmodSync(store, 0o600);
+  }
+  assert.equal(readFileSync(store, 'utf8'), contents);
+});
+
+test('greeting with a read-only store still greets, warns once and leaves it untouched', { skip: !permissionsEnforced }, () => {
+  const store = tempStore();
+  const contents = '[]\n';
+  writeFileSync(store, contents);
+  chmodSync(store, 0o444);
+  try {
+    const result = run(store, 'Ada');
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout, 'Hello, Ada!\n');
+    assert.equal(warningLines(result.stderr).length, 1);
+    assert.match(result.stderr, /^Warning: Ada was not remembered: /);
   } finally {
     chmodSync(store, 0o600);
   }

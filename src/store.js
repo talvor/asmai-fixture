@@ -14,6 +14,14 @@ export class DamagedStoreError extends Error {
   }
 }
 
+// A store that cannot be written, such as one in a missing or read-only place.
+export class UnwritableStoreError extends Error {
+  constructor(path, reason) {
+    super(`the store at ${path} cannot be written (${reason})`);
+    this.name = 'UnwritableStoreError';
+  }
+}
+
 const isGreeting = (entry) =>
   entry !== null && typeof entry === 'object' && typeof entry.name === 'string' && typeof entry.greetedAt === 'string';
 
@@ -36,7 +44,11 @@ export function readGreetings(path = storePath()) {
 export function rememberGreeting(name, path = storePath(), now = new Date()) {
   const entries = readGreetings(path);
   entries.push({ name, greetedAt: now.toISOString() });
-  writeFileSync(path, JSON.stringify(entries, null, 2) + '\n');
+  try {
+    writeFileSync(path, JSON.stringify(entries, null, 2) + '\n');
+  } catch (error) {
+    throw new UnwritableStoreError(path, error.code ?? error.message);
+  }
 }
 
 export const RECENT_LIMIT = 5;

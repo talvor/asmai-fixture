@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { rememberGreeting, recentNames, DamagedStoreError } from './store.js';
+import { rememberGreeting, recentNames, DamagedStoreError, UnwritableStoreError } from './store.js';
 
 export const DEFAULT_NAME = 'Phillip';
 
@@ -24,7 +24,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     try {
       rememberGreeting(name);
     } catch (error) {
-      if (!(error instanceof DamagedStoreError)) throw error;
+      if (!(error instanceof DamagedStoreError || error instanceof UnwritableStoreError)) throw error;
       console.error(`Warning: ${name} was not remembered: ${error.message}.`);
     }
   }

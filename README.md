@@ -2,7 +2,7 @@
 
 A small fixture repository for [talvor/asmai](https://github.com/talvor/asmai). Delivery cases (M1 onwards) open pull requests here. They need CI whose outcome can be switched between **green**, **red**, **slow** and **absent**.
 
-The code is a hello-world Node.js module (`src/index.js`) with a test (`test/index.test.js`).
+The code is a hello-world Node.js module (`src/index.js`) with tests in `test/`.
 
 ```sh
 npm start          # Hello, Phillip!
