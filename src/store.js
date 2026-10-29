@@ -6,11 +6,31 @@ export function storePath() {
   return process.env.ASMAI_FIXTURE_STORE || join(homedir(), '.asmai-fixture.json');
 }
 
+// A store that exists but cannot be read, or is not a list of greetings.
+export class DamagedStoreError extends Error {
+  constructor(path, reason) {
+    super(`the store at ${path} is damaged (${reason})`);
+    this.name = 'DamagedStoreError';
+  }
+}
+
+const isGreeting = (entry) =>
+  entry !== null && typeof entry === 'object' && typeof entry.name === 'string' && typeof entry.greetedAt === 'string';
+
 // The store is an ordered list of { name, greetedAt }, oldest first.
-// A missing store means no one has been greeted yet.
+// A missing store means no one has been greeted yet; a damaged one throws DamagedStoreError.
 export function readGreetings(path = storePath()) {
   if (!existsSync(path)) return [];
-  return JSON.parse(readFileSync(path, 'utf8'));
+  let entries;
+  try {
+    entries = JSON.parse(readFileSync(path, 'utf8'));
+  } catch (error) {
+    throw new DamagedStoreError(path, error instanceof SyntaxError ? 'invalid JSON' : error.code ?? error.message);
+  }
+  if (!Array.isArray(entries) || !entries.every(isGreeting)) {
+    throw new DamagedStoreError(path, 'not a list of greetings');
+  }
+  return entries;
 }
 
 export function rememberGreeting(name, path = storePath(), now = new Date()) {
