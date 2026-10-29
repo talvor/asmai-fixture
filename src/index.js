@@ -8,7 +8,7 @@ export function greet(name = DEFAULT_NAME) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const arg = process.argv[2];
+  const arg = process.argv[2]?.trim();
   if (arg === '--recent') {
     try {
       const names = recentNames();
@@ -18,6 +18,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       console.error(`Warning: cannot list recent names: ${error.message}.`);
       process.exitCode = 1;
     }
+  } else if (arg === '') {
+    console.error('Error: name must not be blank');
+    process.exitCode = 1;
   } else {
     const name = arg ?? DEFAULT_NAME;
     console.log(greet(name));
